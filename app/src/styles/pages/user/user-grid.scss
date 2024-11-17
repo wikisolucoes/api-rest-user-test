@@ -1,0 +1,19 @@
+@import './../../_variables';
+
+.user-grid {
+  max-width: $grid-width;
+
+  .card-body {
+    padding: 0;
+  }
+
+  table {
+    width: 100%;
+
+    th, td {
+      padding: $padding 1rem;
+      vertical-align: middle;
+    }
+  }
+
+}

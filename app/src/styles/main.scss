@@ -1,0 +1,16 @@
+@import "@fortawesome/fontawesome-free/css/all.css";
+
+@import './_variables';
+@import './_mixins';
+
+body {
+    background-color: $bg-color;
+    margin: 0;
+    padding: 0;
+}
+
+#app {
+    max-width: $app-width;
+    margin: 0 auto;
+    padding: 1rem;
+}

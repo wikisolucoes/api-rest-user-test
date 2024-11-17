@@ -1,0 +1,15 @@
+version: "3.9"
+
+services:
+  vite-app:
+    build:
+      context: .
+      dockerfile: .docker/Dockerfile
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./:/app
+      - /app/node_modules
+      - ./scss:/app/scss
+    stdin_open: true
+    tty: true

@@ -1,0 +1,596 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "API Rest Users",
+        "description": "API para gerenciamento de usuários.",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8000/api",
+            "description": "Servidor local"
+        }
+    ],
+    "paths": {
+        "/api/calculate-discount": {
+            "post": {
+                "tags": [
+                    "Desconto"
+                ],
+                "summary": "Calcular desconto total",
+                "description": "Retorna o valor total com desconto aplicado, baseado no tipo do usuário e nos produtos informados.",
+                "operationId": "e182cf5633c5bd1025ede202537581fb",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "products",
+                                    "user"
+                                ],
+                                "properties": {
+                                    "products": {
+                                        "type": "array",
+                                        "items": {
+                                            "required": [
+                                                "price"
+                                            ],
+                                            "properties": {
+                                                "price": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 100.5
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "user": {
+                                        "required": [
+                                            "type"
+                                        ],
+                                        "properties": {
+                                            "type": {
+                                                "type": "string",
+                                                "example": "premium"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Valor total com desconto aplicado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "total": {
+                                            "type": "number",
+                                            "format": "float",
+                                            "example": 270
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Erro nos dados fornecidos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Dados inválidos."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/users": {
+            "get": {
+                "tags": [
+                    "Usuários"
+                ],
+                "summary": "Obtém a lista de usuários paginada",
+                "description": "Retorna uma lista de usuários com suporte a paginação",
+                "operationId": "c457726701591d1183b53aa71fc13441",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Número de itens por página",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Número da página",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de usuários retornada com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/User"
+                                            }
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                },
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 100
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "links": {
+                                            "properties": {
+                                                "first": {
+                                                    "type": "string",
+                                                    "example": "http://api.local/users?page=1"
+                                                },
+                                                "last": {
+                                                    "type": "string",
+                                                    "example": "http://api.local/users?page=10"
+                                                },
+                                                "prev": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "next": {
+                                                    "type": "string",
+                                                    "example": "http://api.local/users?page=2"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Usuários"
+                ],
+                "summary": "Criar usuário",
+                "operationId": "592819a0265360b2014512d6dbfaf0e7",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserCreate"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Usuário criado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação"
+                    }
+                }
+            }
+        },
+        "/api/users/{id}": {
+            "get": {
+                "tags": [
+                    "Usuários"
+                ],
+                "summary": "Detalhes do usuário",
+                "operationId": "36a33ff774d5cba33c039dec2c3e0287",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID do usuário",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detalhes do usuário",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Usuário não encontrado"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Usuários"
+                ],
+                "summary": "Atualizar usuário",
+                "operationId": "b9091397c8b25f12c6adb74be6ce3a5a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID do usuário",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserCreate"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Usuário atualizado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Usuário não encontrado"
+                    },
+                    "422": {
+                        "description": "Erro de validação"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Usuários"
+                ],
+                "summary": "Deletar usuário",
+                "operationId": "fa56cffde745d3f152f95cbacd936c0b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID do usuário",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Usuário deletado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Usuário deletado com sucesso"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Usuário não encontrado"
+                    }
+                }
+            }
+        },
+        "/api/user-types": {
+            "get": {
+                "tags": [
+                    "Tipos de Usuários"
+                ],
+                "summary": "Lista todos os tipos de usuário",
+                "description": "Retorna a lista de tipos de usuário disponíveis",
+                "operationId": "b813476289617c881dfde38f17def4ca",
+                "responses": {
+                    "200": {
+                        "description": "Sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/UserType"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "User": {
+                "title": "Usuário",
+                "description": "Representação de um usuário",
+                "properties": {
+                    "id": {
+                        "description": "Identificador único do usuário",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "id_user_type": {
+                        "description": "ID do tipo de usuário, relacionado à tabela user_type",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "description": "Nome completo do usuário",
+                        "type": "string",
+                        "example": "João da Silva"
+                    },
+                    "email": {
+                        "description": "E-mail do usuário",
+                        "type": "string",
+                        "format": "email",
+                        "example": "joao.silva@example.com"
+                    },
+                    "document_type": {
+                        "description": "Tipo de documento (CPF ou CNPJ)",
+                        "type": "string",
+                        "enum": [
+                            "cpf",
+                            "cnpj"
+                        ],
+                        "example": "cpf"
+                    },
+                    "document": {
+                        "description": "Número do documento (CPF ou CNPJ)",
+                        "type": "string",
+                        "maxLength": 20,
+                        "example": "12345678900"
+                    },
+                    "telephone": {
+                        "description": "Telefone fixo do usuário",
+                        "type": "string",
+                        "maxLength": 20,
+                        "example": "1122334455",
+                        "nullable": true
+                    },
+                    "cellphone": {
+                        "description": "Telefone celular do usuário",
+                        "type": "string",
+                        "maxLength": 20,
+                        "example": "11987654321",
+                        "nullable": true
+                    },
+                    "business": {
+                        "description": "Razão social ou nome fantasia, se aplicável",
+                        "type": "string",
+                        "example": "Empresa XYZ",
+                        "nullable": true
+                    },
+                    "status": {
+                        "description": "Status do usuário ('A' - Ativo, 'I' - Inativo)",
+                        "type": "string",
+                        "enum": [
+                            "A",
+                            "I"
+                        ],
+                        "example": "A"
+                    },
+                    "created_at": {
+                        "description": "Data e hora de criação do registro",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-01T12:00:00Z"
+                    },
+                    "updated_at": {
+                        "description": "Data e hora da última atualização do registro",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-01T12:00:00Z"
+                    }
+                },
+                "type": "object"
+            },
+            "UserCreate": {
+                "title": "Criação de Usuário",
+                "description": "Modelo para criar um novo usuário",
+                "properties": {
+                    "id": {
+                        "description": "Identificador único do usuário",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "id_user_type": {
+                        "description": "ID do tipo de usuário, relacionado à tabela user_type",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "description": "Nome completo do usuário",
+                        "type": "string",
+                        "example": "João da Silva"
+                    },
+                    "email": {
+                        "description": "E-mail do usuário",
+                        "type": "string",
+                        "format": "email",
+                        "example": "joao.silva@example.com"
+                    },
+                    "password": {
+                        "description": "Senha do usuário",
+                        "type": "string",
+                        "format": "password",
+                        "example": "********"
+                    },
+                    "document_type": {
+                        "description": "Tipo de documento (CPF ou CNPJ)",
+                        "type": "string",
+                        "enum": [
+                            "cpf",
+                            "cnpj"
+                        ],
+                        "example": "cpf"
+                    },
+                    "document": {
+                        "description": "Número do documento (CPF ou CNPJ)",
+                        "type": "string",
+                        "maxLength": 20,
+                        "example": "12345678900"
+                    },
+                    "telephone": {
+                        "description": "Telefone fixo do usuário",
+                        "type": "string",
+                        "maxLength": 20,
+                        "example": "1122334455",
+                        "nullable": true
+                    },
+                    "cellphone": {
+                        "description": "Telefone celular do usuário",
+                        "type": "string",
+                        "maxLength": 20,
+                        "example": "11987654321",
+                        "nullable": true
+                    },
+                    "business": {
+                        "description": "Razão social ou nome fantasia, se aplicável",
+                        "type": "string",
+                        "example": "Empresa XYZ",
+                        "nullable": true
+                    },
+                    "status": {
+                        "description": "Status do usuário ('A' - Ativo, 'I' - Inativo)",
+                        "type": "string",
+                        "enum": [
+                            "A",
+                            "I"
+                        ],
+                        "example": "A"
+                    },
+                    "created_at": {
+                        "description": "Data e hora de criação do registro",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-01T12:00:00Z"
+                    },
+                    "updated_at": {
+                        "description": "Data e hora da última atualização do registro",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-01T12:00:00Z"
+                    }
+                },
+                "type": "object"
+            },
+            "UserType": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Administrator"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Full access to the system"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-11-16T12:00:00Z"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-11-16T12:30:00Z"
+                    }
+                },
+                "type": "object"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Desconto",
+            "description": "Desconto"
+        },
+        {
+            "name": "Usuários",
+            "description": "Usuários"
+        },
+        {
+            "name": "Tipos de Usuários",
+            "description": "Tipos de Usuários"
+        }
+    ]
+}
